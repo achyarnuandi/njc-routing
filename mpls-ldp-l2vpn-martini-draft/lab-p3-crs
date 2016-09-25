@@ -1,0 +1,54 @@
+!! IOS XR Configuration 5.2.2
+!! Last configuration change at Sat Sep  3 07:56:44 2016 by arcodelab
+!
+hostname LAB-P3-CRS
+ipv4 access-list LDP-Session
+ 10 permit ipv4 10.0.0.0/8 any
+ 20 permit ipv4 172.16.0.0/16 any
+!
+interface Loopback0
+ ipv4 address 172.16.0.3 255.255.255.255
+!
+interface MgmtEth0/0/CPU0/0
+ shutdown
+!
+interface GigabitEthernet0/0/0/0
+ description to_LAB-P2-MX
+ ipv4 address 10.6.60.10 255.255.255.252
+!
+interface GigabitEthernet0/0/0/1
+ description to_LAB-PE2-MX
+ ipv4 address 10.60.80.1 255.255.255.252
+!
+interface GigabitEthernet0/0/0/2
+ description to_LAB-P1-SR
+ ipv4 address 10.6.60.6 255.255.255.252
+!
+router ospf 0
+ router-id 172.16.0.3
+ area 0
+  interface Loopback0
+   passive enable
+  !
+  interface GigabitEthernet0/0/0/0
+   network point-to-point
+  !
+  interface GigabitEthernet0/0/0/2
+   network point-to-point
+  !
+ !
+ area 2
+  interface GigabitEthernet0/0/0/1
+   network point-to-point
+  !
+ !
+!
+mpls ldp
+ interface GigabitEthernet0/0/0/0
+ !
+ interface GigabitEthernet0/0/0/1
+ !
+ interface GigabitEthernet0/0/0/2
+ !
+!
+end
