@@ -1,0 +1,58 @@
+!! IOS XR Configuration 5.2.2
+!! Last configuration change at Wed Sep 14 13:25:35 2016 by arcodelab
+!
+hostname LAB-PE3-CRS
+interface Loopback0
+ ipv4 address 172.16.3.1 255.255.255.255
+!
+interface MgmtEth0/0/CPU0/0
+ shutdown
+!
+interface GigabitEthernet0/0/0/0
+ description to_LAB-P1-SR
+ ipv4 address 10.60.90.2 255.255.255.252
+!
+interface GigabitEthernet0/0/0/1
+ l2transport
+ !
+!
+interface GigabitEthernet0/0/0/2
+ shutdown
+!
+router ospf 1
+ router-id 172.16.3.1
+ mpls ldp sync
+ mpls ldp auto-config
+ area 3
+  interface Loopback0
+   passive enable
+  !
+  interface GigabitEthernet0/0/0/0
+   network point-to-point
+  !
+ !
+!
+l2vpn
+ pw-class sdp-mpls
+  encapsulation mpls
+  !
+ !
+ bridge group vpls-test
+  bridge-domain vpls-200
+   interface GigabitEthernet0/0/0/1
+   !
+   vfi mesh-sdp-200
+    neighbor 172.16.1.1 pw-id 200
+      pw-class sdp-mpls
+    neighbor 172.16.2.1 pw-id 200
+      pw-class sdp-mpls
+    !
+   !
+  !
+ !
+!
+mpls ldp
+ interface GigabitEthernet0/0/0/0
+ !
+!
+end

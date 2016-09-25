@@ -1,0 +1,87 @@
+version 14.1R4.8;
+system {
+    host-name LAB-P2-MX;
+    root-authentication {
+        encrypted-password "$1$jKszru91$keSDjN4itkDOnAT6w5jAu."; ## SECRET-DATA
+    }
+    syslog {
+        user * {
+            any emergency;
+        }
+        file messages {
+            any notice;
+            authorization info;
+        }
+        file interactive-commands {
+            interactive-commands any;
+        }
+    }
+}
+interfaces {
+    ge-0/0/0 {
+        description to_LAB-P1-SR;
+        unit 0 {
+            family inet {
+                address 10.6.60.2/30;
+            }
+            family mpls;
+        }
+    }
+    ge-0/0/1 {
+        description to_LAB-PE1-SR;
+        unit 0 {
+            family inet {
+                address 10.60.70.1/30;
+            }
+            family mpls;
+        }
+    }
+    ge-0/0/2 {
+        description to_LAB-P3-CRS;
+        unit 0 {
+            family inet {
+                address 10.6.60.9/30;
+            }
+            family mpls;
+        }
+    }
+    lo0 {
+        unit 0 {
+            family inet {
+                address 172.16.0.2/32;
+            }
+        }
+    }
+}
+routing-options {
+    router-id 172.16.0.2;
+}
+protocols {
+    mpls {
+        interface all;
+    }
+    ospf {
+        area 0.0.0.0 {
+            interface lo0.0 {
+                passive;
+            }
+            interface ge-0/0/0.0 {
+                interface-type p2p;
+            }
+            interface ge-0/0/2.0 {
+                interface-type p2p;
+            }
+        }
+        area 0.0.0.1 {
+            interface ge-0/0/1.0 {
+                interface-type p2p;
+            }
+        }
+    }
+    ldp {
+        interface ge-0/0/0.0;
+        interface ge-0/0/1.0;
+        interface ge-0/0/2.0;
+        interface lo0.0;
+    }
+}
